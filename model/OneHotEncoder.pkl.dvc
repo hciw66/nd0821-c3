@@ -1,0 +1,4 @@
+outs:
+- md5: 49996acf2712e72a71fe4d0d764e01a6
+  size: 1924
+  path: OneHotEncoder.pkl
