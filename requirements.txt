@@ -1,0 +1,14 @@
+python==3.8
+numpy
+pandas
+numpy
+scikit-learn
+pytest
+requests
+fastapi
+uvicorn
+gunicorn
+flake8
+dvc
+'dvc[s3]'
+
