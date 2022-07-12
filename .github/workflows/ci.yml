@@ -48,7 +48,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
           role-duration-seconds: 1200
-          role-session-name: githubAction     
+          role-session-name: githubAction
+      - name: Configure Heroku Credentials
+        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "census-rfmodel-heroku" #Must be unique in Heroku
+          heroku_email: "hciw66@gmail.com"  
       - name: 'run dvc pull'
         run: 
           dvc pull    
