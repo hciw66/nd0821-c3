@@ -6,8 +6,8 @@ pytest
 requests
 fastapi
 uvicorn
-gunicorn
 flake8
 dvc
 dvc[s3]
+pandas_profiling
 
