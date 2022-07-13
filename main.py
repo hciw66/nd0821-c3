@@ -11,21 +11,19 @@ import sys
 import os
 
 starter_path = Path(__file__).parent
-repo_path = Path(__file__).parent.parent
-sys.path.append(repo_path)
 sys.path.append(os.path.join(starter_path, 'starter'))
 
 from ml.data import *
 import pickle
 import numpy as np
-# get encoder, lb
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
     os.system("dvc config core.no_scm true")
     if os.system("dvc pull") != 0:
         exit("dvc pull failed")
     os.system("rm -r .dvc .apt/usr/lib/dvc")
-
+    
+# get encoder, lb
 encoder = pickle.load(open(os.path.join(starter_path, 'model/OneHotEncoder.pkl'),'rb'))
 lb = pickle.load(open(os.path.join(starter_path,'model/LabelEncoder.pkl'),'rb'))
 # get model
@@ -66,7 +64,9 @@ class User(BaseModel):
     class Config:
         anystr_strip_whitespace = True
         
-
+class UserList(BaseModel):
+    each_item: List[User] 
+        
         
 example = {"age": 39,
            " workclass": ' State-gov',
@@ -111,7 +111,7 @@ async def predict():
     
     #dict_from_csv = pd.read_csv(file_path).to_dict(orient='records')
     dict_from_csv = pd.read_csv('/home/huichuan/nd0821-c3-starter-code-master/starter/data/raw/census.csv').to_dict(orient='records')
-    user_list = ItemList(each_item= dict_from_csv)
+    user_list = UserList(each_item= dict_from_csv)
     data = pd.DataFrame([t.__dict__ for t in user_list.each_item])
     if 'salary' in data.columns:
         y = data['salary']
@@ -133,7 +133,7 @@ async def predict(file_path: str):
     #return file_path
     
     dict_from_csv = pd.read_csv(file_path).to_dict(orient='records')
-    user_list = ItemList(each_item= dict_from_csv)
+    user_list = UserList(each_item= dict_from_csv)
     data = pd.DataFrame([t.__dict__ for t in user_list.each_item])
     
     if 'salary' in data.columns:
@@ -151,7 +151,7 @@ async def predict(file_path: str):
     preds = model.predict(X).tolist()
     out_list = list()
     for idx in range(len(preds)):
-        if pred[idx] == 0:
+        if preds[idx] == 0:
             out_list.append('<=50K')
         else: 
             out_list.append('>50K')
