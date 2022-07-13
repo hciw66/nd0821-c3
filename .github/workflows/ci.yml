@@ -55,7 +55,7 @@ jobs:
       - name: Test with pytest
         run: |
           pytest -vv 
-      - name: Configure Heroku Credentials
+      - name: deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
