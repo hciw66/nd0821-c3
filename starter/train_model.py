@@ -61,7 +61,7 @@ def clean_data(data):
 # Add code to load in the data.
 try:
     data_b = dvc.api.read(
-       'starter/data/raw/census.csv',
+       'data/raw/census.csv',
        repo='https://github.com/hciw66/nd0821-c3.git',
        mode='rb'
        )
@@ -76,7 +76,7 @@ data = clean_data(data)
 
     
 # Optional enhancement, use K-fold cross validation instead of a train-test split.
-train, test = train_test_split(data, test_size=0.20)
+train, test = train_test_split(data, test_size=0.20, random_state=43)
 
 cat_features = [
     "workclass",
@@ -126,6 +126,12 @@ for feature in cat_features:
     metric_dict[feature] = dataslice_model_metrics(test, cat_features, 'salary', encoder, lb, feature, model)
 filename =  repo_path / 'metrics/dataslice_metrics.pkl' 
 pickle.dump(metric_dict, open(filename, 'wb'))
+
+# write the output as text file
+filename = repo_path / 'metrics/slice_output.txt'
+with open(filename, 'w') as f: 
+    for key, value in metric_dict.items(): 
+        f.write('%s:%s\n' % (key, value))
 
 # save model as a pickle file
 filename = repo_path / 'model/RandomForest_model.pkl'
