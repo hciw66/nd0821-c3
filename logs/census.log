@@ -1,4 +1,4 @@
 botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
 root - INFO - INFO: data read in successful: data shape is (32561, 15).
 root - INFO - INFO: process_data successful: X_train shape is (26029, 108).
-root - INFO - INFO: process_data successful: X_test shape is (6508, 108).
+
