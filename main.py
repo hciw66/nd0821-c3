@@ -42,7 +42,24 @@ class MyStr(str):
         if config.anystr_strip_whitespace:
             return value.strip()
         return value
+
     
+example = {"age": 39,
+           " workclass": ' State-gov',
+           " fnlgt": 77516,
+           " education": ' Bachelors',
+           " education-num": 13,
+           " marital-status": ' Never-married',
+           " occupation": ' Adm-clerical',
+           " relationship": ' Not-in-family',
+           " race": ' White',
+           " sex": ' Male',
+           " capital-gain": 2174,
+           " capital-loss": 0,
+           " hours-per-week": 40,
+           " native-country": ' United-States'
+          }
+
 
 class User(BaseModel):
     age: int              
@@ -63,27 +80,14 @@ class User(BaseModel):
         
     class Config:
         anystr_strip_whitespace = True
+        schema_extra = {
+            "example": example
+        }
+        
         
 class UserList(BaseModel):
     each_item: List[User] 
         
-        
-example = {"age": 39,
-           " workclass": ' State-gov',
-           " fnlgt": 77516,
-           " education": ' Bachelors',
-           " education-num": 13,
-           " marital-status": ' Never-married',
-           " occupation": ' Adm-clerical',
-           " relationship": ' Not-in-family',
-           " race": ' White',
-           " sex": ' Male',
-           " capital-gain": 2174,
-           " capital-loss": 0,
-           " hours-per-week": 40,
-           " native-country": ' United-States'
-          }
-
         
 cat_features = [
     "workclass",
@@ -95,8 +99,7 @@ cat_features = [
     "sex",
     "native_country"
 ]
-
-    
+  
 
 app = FastAPI()
 
@@ -105,35 +108,8 @@ async def root():
     return {"message": "Welcome to nd0821-c3 project!"}
 
 
-@app.post("/predict")
-async def predict():
-    #return file_path
-    
-    #dict_from_csv = pd.read_csv(file_path).to_dict(orient='records')
-    dict_from_csv = pd.read_csv('/home/huichuan/nd0821-c3-starter-code-master/starter/data/raw/census.csv').to_dict(orient='records')
-    user_list = UserList(each_item= dict_from_csv)
-    data = pd.DataFrame([t.__dict__ for t in user_list.each_item])
-    if 'salary' in data.columns:
-        y = data['salary']
-        X = data.drop(['salary'], axis=1)
-    else:
-        y = np.array([])
-        X = data        
-    X_categorical = X[cat_features].values
-    X_continuous = X.drop(*[cat_features], axis=1)
-    X_categorical = encoder.transform(X_categorical)
-    X = np.concatenate([X_continuous, X_categorical], axis=1)
-       
-    preds = model.predict(X).tolist()
-    return {"prediction": preds}
-    
-
-@app.post("/predict_file/{file_path:path}")
-async def predict(file_path: str):
-    #return file_path
-    
-    dict_from_csv = pd.read_csv(file_path).to_dict(orient='records')
-    user_list = UserList(each_item= dict_from_csv)
+@app.post("/predict_user_batch")
+async def predict(user_list: UserList):
     data = pd.DataFrame([t.__dict__ for t in user_list.each_item])
     
     if 'salary' in data.columns:
